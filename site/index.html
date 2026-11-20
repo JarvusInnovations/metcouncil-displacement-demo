@@ -11,10 +11,10 @@
 </head>
 <body>
 <a class="skip" href="#controls">Skip to the controls</a>
-<div class="demo-banner" role="note" aria-label="About this page">
+<section class="demo-banner" aria-label="About this page">
   <strong class="pill">Demonstration</strong>
   <span>Prototype built by Jarvus Innovations for a proposal. Placeholder data from the U.S. Census Bureau. This is not the Metropolitan Council's product and not its displacement analysis.</span>
-</div>
+</section>
 <header class="site-header">
   <div class="brand">
     <svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="15" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="16" cy="16" r="5" fill="currentColor"/><path d="M1 16h10M21 16h10" stroke="currentColor" stroke-width="2"/></svg>
@@ -32,7 +32,7 @@
 
 <main id="main">
   <section class="explore" aria-label="Map and station area details">
-    <aside class="side">
+    <div class="side">
       <form id="controls" class="controls" onsubmit="return false" aria-label="Map controls">
         <div class="field">
           <label for="search">Find a station area</label>
@@ -66,7 +66,7 @@
         <label class="check"><input type="checkbox" id="planned" checked> Show planned lines</label>
       </form>
       <div id="panel" class="panel" aria-live="polite"></div>
-    </aside>
+    </div>
     <div class="map-wrap">
       <div id="map" role="region" aria-label="Map of transit lines and station areas. Use the controls to choose a station area."></div>
       <div class="legend" id="legend" aria-label="Map legend"></div>
@@ -95,7 +95,6 @@
 </footer>
 
 <script src="vendor/maplibre-gl.js"></script>
-<script src="vendor/pmtiles.js"></script>
 <script src="vendor/d3.min.js"></script>
 <script src="assets/common.js"></script>
 <script src="assets/app.js"></script>

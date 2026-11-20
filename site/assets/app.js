@@ -43,7 +43,10 @@
       sources: {
         protomaps: {
           type: "vector",
-          url: "pmtiles://" + base + "basemap/region.pmtiles",
+          tiles: [base + "basemap/tiles/{z}/{x}/{y}.pbf"],
+          minzoom: 0,
+          maxzoom: 13,
+          bounds: [-94.1, 44.4, -92.6, 45.5],
           attribution: '<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>, <a href="https://protomaps.com">Protomaps</a>',
         },
       },
@@ -183,6 +186,16 @@
 
   function select(sel, fromMap) {
     state.sel = sel;
+    // A chosen station is always shown, so clear any filter that hides it.
+    const a = sel && sel.kind === "station" ? areaById(sel.id) : null;
+    if (a) {
+      const p = a.properties;
+      let changed = false;
+      if (state.line && state.line !== p.line) { state.line = ""; changed = true; }
+      if (state.mode !== "all" && state.mode !== p.mode) { state.mode = "all"; changed = true; }
+      if (!state.planned && p.status !== "Existing") { state.planned = true; changed = true; }
+      if (changed) { syncControls(); applyFilters(); }
+    }
     writeHash();
     renderPanel();
     if (!map || !map.getLayer("points")) return;
@@ -493,8 +506,6 @@
     renderFooter();
     renderStory();
 
-    const protocol = new pmtiles.Protocol();
-    maplibregl.addProtocol("pmtiles", protocol.tile);
     map = new maplibregl.Map({
       container: "map",
       style: basemapStyle(layers),

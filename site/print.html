@@ -10,12 +10,13 @@
 <link rel="stylesheet" href="assets/print.css">
 </head>
 <body class="print-page">
-<div class="toolbar no-print">
+<nav class="toolbar no-print" aria-label="Page actions">
   <a href="./" id="back">Back to the explorer</a>
   <button type="button" id="print-btn">Print or save as PDF</button>
-</div>
+</nav>
+<main>
 <article class="sheet" id="sheet">
-  <div class="demo-banner sheet-banner" role="note">
+  <div class="demo-banner sheet-banner" role="note" aria-label="About this page">
     <strong class="pill">Demonstration</strong>
     <span>Prototype built by Jarvus Innovations for a proposal. Placeholder data from the U.S. Census Bureau. This is not the Metropolitan Council's product and not its displacement analysis.</span>
   </div>
@@ -36,6 +37,7 @@
   <section id="sheet-story" class="sheet-story"></section>
   <footer class="sheet-foot" id="foot"></footer>
 </article>
+</main>
 <script src="vendor/d3.min.js"></script>
 <script src="assets/common.js"></script>
 <script src="assets/print.js"></script>

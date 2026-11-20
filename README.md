@@ -6,7 +6,7 @@ This is not the Council's product, and its figures are not a measure of displace
 
 ## The update is one command
 
-You need Python 3.10 or newer. Install the packages once per computer, then run the update:
+You need Python 3.11, 3.12, or 3.13 (ArcGIS Pro installs one). The packages are pure Python or come as ready-built wheels for Windows, macOS, and Linux, so no compiler or system library is needed. Install the packages once per computer, then run the update:
 
 ```
 python -m pip install -r requirements.txt
@@ -32,7 +32,7 @@ To add a year, add it to `YEARS` near the top of `update.py` and run it again.
 python serve.py
 ```
 
-Then open http://localhost:8000/. This small preview server is needed because Python's built-in one cannot answer the partial requests the map uses to read the basemap file. Any ordinary static host can.
+Then open http://localhost:8000/. Any static file server works; `python -m http.server -d dist` does too.
 
 ## Publish it
 
@@ -46,8 +46,8 @@ This repository publishes itself to GitHub Pages: `.github/workflows/pages.yml` 
 | --- | --- |
 | `update.py` | The update script. Settings a staff member might change are at the top. |
 | `site/` | The page source: HTML, CSS, and JavaScript, with the map and chart libraries in `site/vendor/` at fixed versions. |
-| `site/basemap/` | The basemap: one PMTiles file of OpenStreetMap data for the region, its style, and the label fonts. |
-| `tools/basemap.py` | Cuts a new basemap file. `python update.py --refresh-basemap` runs it. |
+| `site/basemap/` | The basemap: a folder of OpenStreetMap map tiles for the region (`tiles/{z}/{x}/{y}.pbf`), its style, and the label fonts. Plain files, so any static host serves them; a single PMTiles file was tried and dropped because GitHub Pages compresses partial responses. |
+| `tools/basemap.py` | Cuts new basemap tiles. `python update.py --refresh-basemap` runs it. |
 | `tools/basemap-style.cjs` | Regenerates `site/basemap/layers.json` from the Protomaps style package. Needs Node.js; only for changing the basemap's look. |
 | `serve.py` | The local preview server. |
 
@@ -66,7 +66,6 @@ The Census Bureau's data API refused requests made without a key when this was b
 
 - MapLibre GL JS 4.7.1: BSD 3-Clause (`site/vendor/maplibre-gl.LICENSE.txt`)
 - D3 7.9.0: ISC (`site/vendor/d3.LICENSE.txt`)
-- PMTiles 3.2.1 (JavaScript): BSD 3-Clause
 - Noto Sans fonts: SIL Open Font License 1.1
 - Basemap data: © OpenStreetMap contributors, Open Database License
-- Python packages: requests (Apache 2.0), shapely (BSD 3-Clause), pyproj (MIT), pyshp (MIT), pmtiles (BSD 3-Clause)
+- Python packages: requests (Apache 2.0), shapely (BSD 3-Clause), pyproj (MIT), pyshp (MIT), pmtiles (BSD 3-Clause, used only to cut the basemap)

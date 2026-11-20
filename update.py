@@ -51,7 +51,7 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 SITE = os.path.join(ROOT, "site")
 DIST = os.path.join(ROOT, "dist")
 CACHE = os.path.join(ROOT, ".cache")
-BASEMAP = os.path.join(SITE, "basemap", "region.pmtiles")
+BASEMAP = os.path.join(SITE, "basemap", "tiles")
 
 USER_AGENT = "Mozilla/5.0 (compatible; data-fetch)"
 
@@ -527,7 +527,6 @@ def main():
         sys.path.insert(0, os.path.join(ROOT, "tools"))
         import basemap
 
-        os.makedirs(os.path.dirname(BASEMAP), exist_ok=True)
         info = basemap.cut(BASEMAP, REGION_BBOX, max_zoom=13)
         say("  Basemap cut from %s (%d tiles)" % (info["url"], info["tiles"]))
     shutil.copytree(SITE, DIST)
@@ -609,7 +608,8 @@ def main():
         "sources": SOURCES,
         "problems": problems,
         "update_seconds": round(elapsed, 1),
-        "basemap_bytes": os.path.getsize(BASEMAP),
+        "basemap_bytes": dir_stats(BASEMAP)[1],
+        "basemap_files": dir_stats(BASEMAP)[0],
         "command": "python update.py",
     }
     write_datapackage(data_dir, bool(rows))

@@ -1,0 +1,14 @@
+{
+ "source_build": "https://build.protomaps.com/20261118.pmtiles",
+ "bounds": [
+  -94.1,
+  44.4,
+  -92.6,
+  45.5
+ ],
+ "minzoom": 0,
+ "maxzoom": 13,
+ "attribution": "<a href=\"https://www.openstreetmap.org/copyright\" target=\"_blank\">&copy; OpenStreetMap</a>",
+ "cut": "2026-11-20",
+ "tiles": 1787
+}

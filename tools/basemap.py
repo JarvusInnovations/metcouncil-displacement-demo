@@ -1,9 +1,15 @@
 """Cut a small OpenStreetMap basemap for the seven-county region.
 
-The basemap is a single PMTiles file stored beside the page, so the map
-needs no outside tile service. It is cut from the public daily build of
-the Protomaps basemap (OpenStreetMap data, Open Database License) by
-reading only the tiles that cover the region.
+The basemap is a folder of ordinary map tile files ({z}/{x}/{y}.pbf)
+stored beside the page, so the map needs no outside tile service and any
+static host can serve it as plain files. The tiles are cut from the
+public daily build of the Protomaps basemap (OpenStreetMap data, Open
+Database License) by reading only the tiles that cover the region.
+
+A single PMTiles file would be smaller to store, but it is read with
+partial (range) requests, and some static hosts, GitHub Pages among them,
+compress the response before applying the range, which corrupts it.
+Plain tile files avoid that.
 
 The basemap changes rarely. update.py calls this only when the file is
 missing or when it is run with --refresh-basemap.
@@ -12,6 +18,8 @@ missing or when it is run with --refresh-basemap.
 import datetime
 import json
 import math
+import os
+import shutil
 import sys
 from concurrent.futures import ThreadPoolExecutor
 from functools import lru_cache
@@ -25,9 +33,9 @@ from pmtiles.tile import (
     deserialize_directory,
     deserialize_header,
     find_tile,
+    tileid_to_zxy,
     zxy_to_tileid,
 )
-from pmtiles.writer import Writer
 
 BUILD_URL = "https://build.protomaps.com/{date}.pmtiles"
 USER_AGENT = "Mozilla/5.0 (compatible; data-fetch)"
@@ -60,8 +68,8 @@ def find_build(session, days_back=10):
     raise RuntimeError("No Protomaps daily build found in the last %d days" % days_back)
 
 
-def cut(out_path, bbox, max_zoom=12, url=None):
-    """Write a PMTiles file holding every tile over bbox from zoom 0 to max_zoom."""
+def cut(out_dir, bbox, max_zoom=13, url=None):
+    """Write every tile over bbox, zoom 0 to max_zoom, as out_dir/z/x/y.pbf."""
     session = requests.Session()
     session.headers["User-Agent"] = USER_AGENT
     date = None
@@ -129,22 +137,30 @@ def cut(out_path, bbox, max_zoom=12, url=None):
     with ThreadPoolExecutor(max_workers=12) as pool:
         tiles = list(pool.map(fetch, wanted))
 
-    with open(out_path, "wb") as f:
-        writer = Writer(f)
-        count = 0
-        for tileid, data in tiles:
-            if data:
-                writer.write_tile(tileid, data)
-                count += 1
-        header["min_lon_e7"] = int(bbox[0] * 1e7)
-        header["min_lat_e7"] = int(bbox[1] * 1e7)
-        header["max_lon_e7"] = int(bbox[2] * 1e7)
-        header["max_lat_e7"] = int(bbox[3] * 1e7)
-        header["center_zoom"] = 9
-        header["center_lon_e7"] = int((bbox[0] + bbox[2]) / 2 * 1e7)
-        header["center_lat_e7"] = int((bbox[1] + bbox[3]) / 2 * 1e7)
-        metadata["source_build"] = url
-        writer.finalize(header, metadata)
+    if os.path.exists(out_dir):
+        shutil.rmtree(out_dir)
+    count = 0
+    for tile_id, data in tiles:
+        if not data:
+            continue
+        if header["tile_compression"] == Compression.GZIP:
+            data = gzip.decompress(data)
+        z, x, y = tileid_to_zxy(tile_id)
+        os.makedirs(os.path.join(out_dir, str(z), str(x)), exist_ok=True)
+        with open(os.path.join(out_dir, str(z), str(x), "%d.pbf" % y), "wb") as f:
+            f.write(data)
+        count += 1
+    info = {
+        "source_build": url,
+        "bounds": list(bbox),
+        "minzoom": 0,
+        "maxzoom": max_zoom,
+        "attribution": metadata.get("attribution", ""),
+        "cut": datetime.date.today().isoformat(),
+        "tiles": count,
+    }
+    with open(os.path.join(out_dir, "tiles.json"), "w") as f:
+        json.dump(info, f, indent=1)
     return {"url": url, "build": date, "tiles": count, "max_zoom": max_zoom}
 
 

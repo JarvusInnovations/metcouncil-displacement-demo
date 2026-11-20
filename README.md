@@ -46,7 +46,7 @@ This repository publishes itself to GitHub Pages: `.github/workflows/pages.yml` 
 | --- | --- |
 | `update.py` | The update script. Settings a staff member might change are at the top. |
 | `site/` | The page source: HTML, CSS, and JavaScript, with the map and chart libraries in `site/vendor/` at fixed versions. |
-| `site/basemap/` | The basemap: a folder of OpenStreetMap map tiles for the region (`tiles/{z}/{x}/{y}.pbf`), its style, and the label fonts. Plain files, so any static host serves them; a single PMTiles file was tried and dropped because GitHub Pages compresses partial responses. |
+| `site/basemap/` | The basemap: a folder of OpenStreetMap map tiles for the region (`tiles/{z}/{x}/{y}.pbf`), its style, and the label fonts. Static files, so any static host serves them; a single PMTiles file was tried and dropped because GitHub Pages compresses partial responses. |
 | `tools/basemap.py` | Cuts new basemap tiles. `python update.py --refresh-basemap` runs it. |
 | `tools/basemap-style.cjs` | Regenerates `site/basemap/layers.json` from the Protomaps style package. Needs Node.js; only for changing the basemap's look. |
 | `serve.py` | The local preview server. |

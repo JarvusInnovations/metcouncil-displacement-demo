@@ -2,7 +2,7 @@
 
 The basemap is a folder of ordinary map tile files ({z}/{x}/{y}.pbf)
 stored beside the page, so the map needs no outside tile service and any
-static host can serve it as plain files. The tiles are cut from the
+static host can serve it as static files. The tiles are cut from the
 public daily build of the Protomaps basemap (OpenStreetMap data, Open
 Database License) by reading only the tiles that cover the region.
 

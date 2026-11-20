@@ -163,6 +163,7 @@ input[type="search"]:hover, select:hover { border-color: var(--muted); }
 .stats div { background: var(--surface-2); border: 1px solid var(--rule); border-radius: 8px; padding: 8px 10px; }
 .stats dt { font-size: 12px; color: var(--muted); }
 .stats dd { margin: 0; font-size: 22px; font-weight: 650; font-variant-numeric: tabular-nums; }
+.stats dd.na { font-size: 16px; font-weight: 600; color: var(--ink-2); font-style: italic; padding: 4px 0; }
 .stats dd.cmp { font-size: 12px; font-weight: 400; color: var(--muted); }
 .withheld { background: var(--warn-bg); border-left: 4px solid var(--warn-rule); padding: 8px 12px; border-radius: 4px; margin: 0 0 12px; font-size: 14px; }
 .note { background: var(--surface-2); border: 1px dashed var(--rule); padding: 8px 12px; border-radius: 8px; color: var(--ink-2); font-size: 14px; }

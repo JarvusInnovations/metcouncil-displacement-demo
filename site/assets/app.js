@@ -283,7 +283,7 @@
     const stat = (label, value, compare) => {
       const d = stats.append("div");
       d.append("dt").text(label);
-      d.append("dd").text(value);
+      d.append("dd").attr("class", /^(withheld|no data)$/.test(value) ? "na" : null).text(value);
       if (compare) d.append("dd").attr("class", "cmp").text(compare);
     };
     const show = (row, k, f) => (!row ? "no data" : row.withheld ? "withheld" : f(row[k]));

@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How this was built</title>
+<meta name="description" content="How the Station Area Explorer demonstration was built: its files, sources, update command, and method.">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to the content</a>
+<div class="demo-banner" role="note" aria-label="About this page">
+  <strong class="pill">Demonstration</strong>
+  <span>Prototype built by Jarvus Innovations for a proposal. Placeholder data from the U.S. Census Bureau. This is not the Metropolitan Council's product and not its displacement analysis.</span>
+</div>
+<header class="site-header">
+  <div class="brand">
+    <svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="15" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="16" cy="16" r="5" fill="currentColor"/><path d="M1 16h10M21 16h10" stroke="currentColor" stroke-width="2"/></svg>
+    <div>
+      <h1>Station Area Explorer</h1>
+      <p class="sub">Transit station areas in the seven-county Twin Cities region</p>
+    </div>
+  </div>
+  <nav aria-label="Pages">
+    <a href="./">Explore</a>
+    <a href="how.html" aria-current="page">How this was built</a>
+    <a href="print.html">Print one page</a>
+  </nav>
+</header>
+
+<main id="main" class="page">
+  <h1>How this was built</h1>
+  <p>This site is a folder of plain files. A visitor's browser reads them and draws the map and charts itself. No program runs on the web server, there is no database, and nothing asks a visitor to sign in. The figures below are read from the build's own record of itself, written by the update script each time it runs.</p>
+
+  <dl class="facts" id="facts">
+    <div><dt>Files in the site</dt><dd id="f-files">…</dd></div>
+    <div><dt>Total size</dt><dd id="f-size">…</dd></div>
+    <div><dt>Last update run took</dt><dd id="f-time">…</dd></div>
+    <div><dt>License fees</dt><dd>$0</dd></div>
+  </dl>
+  <p id="f-note"></p>
+
+  <h2>The yearly update is one command</h2>
+  <p>A staff member with Python installed runs these two lines from the project folder. The first installs the open-source packages the script uses; it is needed once per computer.</p>
+  <pre><code>python -m pip install -r requirements.txt
+python update.py</code></pre>
+  <p>The script reads the Council's published layers and the Census tables again, checks them, works out the figures for every station area, writes the finished files, and prints a short report. The report from the last run is saved as <a href="data/update-report.txt">update-report.txt</a>. Publishing means copying the <code>dist</code> folder to any static web host.</p>
+
+  <h2>What the site is made of</h2>
+  <ul>
+    <li>Geography as GeoJSON and figures as a comma-separated table, in the <code>data</code> folder. Both open in ArcGIS, QGIS, and spreadsheet programs.</li>
+    <li>MapLibre GL JS 4.7.1 for the map (BSD 3-Clause license), D3 7.9.0 for the charts (ISC license), and PMtiles 3.2.1 to read the basemap file (BSD 3-Clause license). All three are stored in the site at fixed versions and nothing is loaded from another website.</li>
+    <li>A basemap built from OpenStreetMap data (Open Database License), cut from the Protomaps daily build and stored as one file beside the page.</li>
+    <li>An update script in plain Python, using the open-source packages requests, shapely, pyproj, pyshp, and pmtiles.</li>
+  </ul>
+
+  <h2>Sources</h2>
+  <p>Every source is public and was read without an account or a key.</p>
+  <div id="sources"></div>
+
+  <h2 id="method">Method note</h2>
+  <p><strong>Station areas.</strong> The Council's DTAT Stations layer has one point for each platform or direction. The script groups the points by line and station name and draws the land within half a mile of any of them. That gives one station area for each station on each line, so a station served by two lines has two areas that overlap. The Council's DTAT Areas layer has one area for each line, two downtown areas, and three combined areas; the explorer uses it for the corridor view and for the three statements.</p>
+  <p class="needs-figures"><strong>Placeholder figures.</strong> The figures are American Community Survey five-year estimates for census tracts in Anoka, Carver, Dakota, Hennepin, Ramsey, Scott, and Washington counties: table B25003 (Tenure) for households and renter households, and table B07003 (Geographical mobility in the past year) for residents age 1 and over and those who lived in the same house a year earlier. Three five-year periods are used, and they do not overlap: <span id="m-years">2010 to 2014, 2015 to 2019, and 2020 to 2024</span>.</p>
+  <p class="needs-figures"><strong>From tracts to station areas.</strong> Each tract's counts are shared among the areas it overlaps in proportion to the overlapping land area, using that period's own tract boundaries. The 2010 to 2014 and 2015 to 2019 periods use tracts drawn for the 2010 census, and 2020 to 2024 uses tracts drawn for 2020, so no relationship file is needed. Sharing by area assumes people are spread evenly across each tract, which they are not; the real dashboard would use the Analysis team's results instead. Shares are computed from the shared counts. Margins of error are not carried through in this demonstration.</p>
+  <p class="needs-figures"><strong>Withheld figures.</strong> When the estimates place fewer than <span id="m-min">100</span> households in a station area, its figures are withheld and shown as "withheld", never as zero.</p>
+  <p class="needs-figures"><strong>The Census API.</strong> The Census Bureau's data API refused requests made without a key when this was built, so the script reads the same tables from the Bureau's public summary files at www2.census.gov instead.</p>
+  <p class="needs-figures"><strong>What the figures are not.</strong> They are Census estimates of tenure and of recent moves, used to show how statements, charts, and tables would work on the real dashboard. They are not a measure of displacement or of displacement risk, and they are not the Council's analysis.</p>
+</main>
+
+<footer class="site-footer">
+  <div><p>Built by Jarvus Innovations as a work sample for Metropolitan Council RFP 26P232.</p></div>
+  <div><p><a href="./">Back to the explorer</a></p></div>
+</footer>
+<script src="vendor/d3.min.js"></script>
+<script src="assets/common.js"></script>
+<script>
+(async function () {
+  const meta = await fetch("data/meta.json").then((r) => r.json());
+  const mb = (b) => (b / 1e6).toFixed(1) + " MB";
+  document.getElementById("f-files").textContent = meta.site_files;
+  document.getElementById("f-size").textContent = mb(meta.site_bytes);
+  const s = meta.update_seconds;
+  document.getElementById("f-time").textContent = s < 90 ? Math.round(s) + " seconds" : (s / 60).toFixed(1) + " minutes";
+  const basemap = meta.basemap_bytes ? " The basemap file is " + mb(meta.basemap_bytes) + " of that; the browser reads only the parts it needs for the view on screen." : "";
+  document.getElementById("f-note").textContent =
+    "Last built " + SAX.dateText(meta.built) + "." + basemap + " Run time includes downloading every source.";
+  document.getElementById("m-min").textContent = meta.min_households;
+  if (!meta.years || !meta.years.length) {
+    document.querySelectorAll(".needs-figures").forEach((e) => (e.hidden = true));
+  } else {
+    const p = meta.years.map(SAX.periodLabel);
+    document.getElementById("m-years").textContent = p.length > 1 ? p.slice(0, -1).join(", ") + ", and " + p[p.length - 1] : p[0];
+  }
+  const rows = meta.sources;
+  SAX.dataTable(document.getElementById("sources"), "Sources read by the last update", [
+    { label: "Source", value: (r) => r.name },
+    { label: "Records", value: (r) => d3.format(",")(r.rows) },
+    { label: "Read on", value: (r) => SAX.dateText(r.fetched) },
+  ], rows);
+  const tb = document.querySelectorAll("#sources tbody tr");
+  rows.forEach((r, i) => {
+    const th = tb[i].firstChild;
+    th.textContent = "";
+    const a = document.createElement("a");
+    a.href = r.url;
+    a.textContent = r.name;
+    th.appendChild(a);
+  });
+})();
+</script>
+</body>
+</html>

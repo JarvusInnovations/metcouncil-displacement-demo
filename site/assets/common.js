@@ -32,6 +32,7 @@
   const pct1 = (v) => (v === null || v === undefined || v === "" || isNaN(v) ? "" : (v * 100).toFixed(1) + "%");
   const num = (v) => (v === null || v === undefined || v === "" || isNaN(v) ? "" : d3.format(",")(Math.round(v / 10) * 10));
   const periodLabel = (y) => (y - 4) + " to " + y;
+  const shortPeriod = (y) => (y - 4) + "-" + String(y).slice(2);
 
   async function loadJSON(path) {
     const r = await fetch(path);
@@ -110,7 +111,7 @@
         const w = x1.bandwidth();
         if (d.value === null || d.value === undefined) {
           g.append("rect").attr("class", "withheld-bar").attr("x", x).attr("y", y(0) - 3).attr("width", w).attr("height", 3);
-          g.append("text").attr("class", "val muted").attr("x", x + w / 2).attr("y", y(0) - 8).attr("text-anchor", "middle").text(d.withheld ? "withheld" : "no data");
+          g.append("text").attr("class", "val muted").attr("transform", "translate(" + (x + w / 2 + 4) + "," + (y(0) - 8) + ") rotate(-90)").text(d.withheld ? "withheld" : "no data");
           return;
         }
         const top = y(d.value), h = Math.max(1, y(0) - top), r = Math.min(4, w / 2, h);
@@ -131,7 +132,7 @@
       .attr("x", (d) => x0(d) + x0.bandwidth() / 2)
       .attr("y", H - 8)
       .attr("text-anchor", "middle")
-      .text((d) => periodLabel(d));
+      .text((d) => shortPeriod(d));
 
     if (series.length > 1) {
       const lg = d3.select(container).append("ul").attr("class", "chart-legend");

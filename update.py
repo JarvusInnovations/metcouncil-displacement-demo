@@ -612,22 +612,72 @@ def main():
         "basemap_bytes": os.path.getsize(BASEMAP),
         "command": "python update.py",
     }
-    meta_path = os.path.join(data_dir, "meta.json")
-    for _ in range(2):  # the file's own size is part of the total
-        files, size = dir_stats(DIST)
-        meta["site_files"] = files
-        meta["site_bytes"] = size
-        with open(meta_path, "w") as f:
-            json.dump(meta, f, indent=1)
-    files, size = dir_stats(DIST)
-
+    write_datapackage(data_dir, bool(rows))
     say()
-    say("Wrote %d files, %.1f MB, to dist/ in %.0f seconds" % (files, size / 1e6, elapsed))
     if problems:
         say("Finished with problems; read the lines marked PROBLEM above.")
-    with open(os.path.join(data_dir, "update-report.txt"), "w") as f:
-        f.write("\n".join(report) + "\n")
 
+    # The site's own size is recorded in meta.json and in the report, which
+    # are part of the site, so write them until the numbers settle.
+    meta_path = os.path.join(data_dir, "meta.json")
+    report_path = os.path.join(data_dir, "update-report.txt")
+    files, size = dir_stats(DIST)
+    for _ in range(4):
+        meta["site_files"], meta["site_bytes"] = files, size
+        with open(meta_path, "w") as f:
+            json.dump(meta, f, indent=1)
+        with open(report_path, "w") as f:
+            f.write("\n".join(report + ["Wrote %d files, %.1f MB, to dist/ in %.0f seconds" % (files, size / 1e6, elapsed)]) + "\n")
+        new = dir_stats(DIST)
+        if new == (files, size):
+            break
+        files, size = new
+    print("Wrote %d files, %.1f MB, to dist/ in %.0f seconds" % (files, size / 1e6, elapsed))
+
+
+FIELDS = {
+    "geography_type": "station_area, corridor_area (the Council's DTAT Areas), or region (the seven counties)",
+    "geography_id": "Identifier matching the id property in station_areas.geojson or corridor_areas.geojson",
+    "geography_name": "Station name, or the area name from DTAT Areas",
+    "period": "American Community Survey five-year period",
+    "year": "Last year of the period",
+    "households": "Occupied housing units (B25003 cell 1), shared from tracts by land area",
+    "renter_households": "Renter-occupied housing units (B25003 cell 3), shared from tracts by land area",
+    "renter_share": "renter_households divided by households",
+    "residents_1yr": "Population age 1 and over (B07003 cell 1), shared from tracts by land area",
+    "moved_in_past_year": "residents_1yr minus those in the same house a year earlier (B07003 cell 4)",
+    "moved_share": "moved_in_past_year divided by residents_1yr",
+    "withheld": "Reason the figures are withheld; empty when they are shown",
+}
+
+
+def write_datapackage(data_dir, with_figures):
+    """A machine-readable description of every data file (Frictionless Data Package)."""
+    res = [
+        {"name": "stations", "path": "stations.geojson", "format": "geojson", "description": "Council DTAT Stations layer: one point per platform or direction"},
+        {"name": "alignments", "path": "alignments.geojson", "format": "geojson", "description": "Council DTAT Alignments layer: transitway lines with mode and status"},
+        {"name": "high_frequency_network", "path": "high_frequency_network.geojson", "format": "geojson", "description": "Council High Frequency Network layer"},
+        {"name": "corridor_areas", "path": "corridor_areas.geojson", "format": "geojson", "description": "Council DTAT Areas layer: one area per line, two downtown areas, three combined areas"},
+        {"name": "station_areas", "path": "station_areas.geojson", "format": "geojson", "description": "Land within half a mile of each station's platforms, one area per station per line, drawn by update.py"},
+    ]
+    if with_figures:
+        res.append(
+            {
+                "name": "figures",
+                "path": "figures.csv",
+                "format": "csv",
+                "description": "Placeholder Census figures (American Community Survey five-year estimates). Not a measure of displacement.",
+                "schema": {"fields": [{"name": k, "description": v} for k, v in FIELDS.items()]},
+            }
+        )
+    pkg = {
+        "name": "station-area-explorer-demo",
+        "title": "Station Area Explorer demonstration data",
+        "description": "Demonstration data built by Jarvus Innovations. Geography from the Metropolitan Council's public TOD map service; placeholder figures from the U.S. Census Bureau.",
+        "resources": res,
+    }
+    with open(os.path.join(data_dir, "datapackage.json"), "w") as f:
+        json.dump(pkg, f, indent=1)
 
 if __name__ == "__main__":
     main()

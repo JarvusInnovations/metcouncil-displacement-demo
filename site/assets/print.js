@@ -63,16 +63,17 @@
   } else {
     const lastY = years[years.length - 1];
     const r = data.fig(type, id, lastY);
-    F.append("h2").text("Census estimates, " + periodLabel(years[0]) + " to " + periodLabel(lastY).split(" to ")[1]);
-    if (r && r.withheld) {
-      F.append("p").attr("class", "withheld").text("Figures withheld for " + periodLabel(lastY) + ": the estimates place fewer than " + data.meta.min_households + " households in this area. A withheld figure is not zero.");
+    F.append("h2").text("Census estimates, " + (years[0] - 4) + " to " + lastY);
+    const held = years.filter((y) => { const x = data.fig(type, id, y); return x && x.withheld; });
+    if (held.length) {
+      F.append("p").attr("class", "withheld").text("Figures withheld for " + (held.length === years.length ? "every period" : held.map(periodLabel).join(" and ")) + ": the estimates place fewer than " + data.meta.min_households + " households in this area. A withheld figure is not zero.");
     }
     const ch = F.append("div");
     ch.append("h3").text("Renter households by period");
     barChart(ch.node(), [
       { name: type === "station_area" ? "This station area" : "This corridor", cls: 1, values: years.map((y) => { const x = data.fig(type, id, y); return { year: y, value: x && !x.withheld ? x.renter_share : null, withheld: x && x.withheld }; }) },
       { name: "Seven-county region", cls: 2, values: years.map((y) => { const x = data.fig("region", "region", y); return { year: y, value: x ? x.renter_share : null }; }) },
-    ], { height: 130, label: "Share of renter households by period, this area and the region. The table lists the same figures." });
+    ], { width: 420, height: 130, label: "Share of renter households by period, this area and the region. The table lists the same figures." });
     dataTable(F.node(), title + " and the region",
       [{ label: "Period", value: (y) => periodLabel(y) }]
         .concat(["renter_share", "moved_share", "households"].map((k) => ({ label: COLS[k].label, value: (y) => COLS[k].value(data.fig(type, id, y)) })))
@@ -88,7 +89,7 @@
     const c = S.append("div");
     c.append("h2").text(s.title);
     c.append("p").attr("class", "statement").text(s.text);
-    barChart(c.node(), s.series, { format: s.format, height: 120, width: 240, label: s.title + " chart." });
+    barChart(c.node(), s.series, { format: s.format, height: 125, width: 300, label: s.title + " chart." });
   });
 
   const foot = d3.select("#foot");

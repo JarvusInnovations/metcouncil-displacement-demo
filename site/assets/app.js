@@ -114,7 +114,7 @@
       paint: {
         "circle-radius": ["interpolate", ["linear"], ["zoom"], 9, 3.5, 12, 6, 15, 9],
         "circle-color": ["coalesce", ["feature-state", "color"], "#ffffff"],
-        "circle-stroke-color": ["case", ["boolean", ["feature-state", "withheld"], false], "#52514e", "#1f2933"],
+        "circle-stroke-color": ["case", ["boolean", ["feature-state", "withheld"], false], "#52514e", css("--pt-stroke")],
         "circle-stroke-width": ["case", ["boolean", ["feature-state", "withheld"], false], 2, 1.25],
       },
     });
@@ -469,7 +469,7 @@
   function renderFooter() {
     const files = ["stations.geojson", "alignments.geojson", "high_frequency_network.geojson", "corridor_areas.geojson", "station_areas.geojson"];
     if ((data.meta.years || []).length) files.push("figures.csv");
-    files.push("meta.json", "update-report.txt");
+    files.push("datapackage.json", "meta.json", "update-report.txt");
     const ul = d3.select("#files");
     files.forEach((f) => ul.append("li").append("a").attr("href", "data/" + f).text(f));
     $("snapshot").textContent = "Council layers as published on " + dateText(data.meta.snapshot_taken) + ". The map works from that saved copy.";

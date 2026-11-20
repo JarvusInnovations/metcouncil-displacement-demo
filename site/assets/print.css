@@ -9,7 +9,9 @@
 .sheet .meta { color: #5f646b; margin: 0 0 10px; }
 .sheet-grid { display: grid; grid-template-columns: 1fr 1.15fr; gap: 18px; align-items: start; }
 .sheet-map { margin: 0; border: 1px solid #dcd8ce; border-radius: 8px; padding: 6px; }
-.sheet-map svg { width: 100%; height: auto; display: block; }
+.sheet-map svg { width: 100%; height: auto; display: block; max-height: 2.9in; }
+.sheet .chart-legend { gap: 10px; font-size: 10.5px; margin-top: 2px; }
+.sheet .chart-legend li { display: flex; }
 .sheet-map figcaption { font-size: 10.5px; color: #5f646b; padding: 4px 4px 0; }
 .sheet h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; color: #41464e; margin: 0 0 6px; }
 .sheet h3 { font-size: 12px; margin: 0 0 2px; color: #41464e; }
@@ -24,7 +26,7 @@
 .sheet .key.s1 { background: #2a78d6; }
 .sheet .key.s2 { background: #8a8983; }
 .sheet .chart-legend { color: #41464e; }
-.sheet-story { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 16px; border-top: 1px solid #dcd8ce; padding-top: 12px; }
+.sheet-story { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 12px; border-top: 1px solid #dcd8ce; padding-top: 12px; }
 .sheet-story p.statement { margin: 2px 0 6px; font-size: 12px; }
 .sheet-foot { margin-top: 14px; border-top: 1px solid #dcd8ce; padding-top: 8px; font-size: 10.5px; color: #5f646b; }
 .sheet-foot p { margin: 0 0 3px; }

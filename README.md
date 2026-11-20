@@ -32,7 +32,7 @@ To add a year, add it to `YEARS` near the top of `update.py` and run it again.
 python serve.py
 ```
 
-Then open http://localhost:8000/. Any static file server works; `python -m http.server -d dist` does too.
+Then open http://localhost:8000/ for the landing page; the explorer is at /explore/. Any static file server works; `python -m http.server -d dist` does too.
 
 ## Publish it
 

@@ -34,6 +34,9 @@
   const periodLabel = (y) => (y - 4) + " to " + y;
   const shortPeriod = (y) => (y - 4) + "-" + String(y).slice(2);
 
+  // Pages below the site root set window.SAX_ROOT = "../" before this file.
+  const ROOT = window.SAX_ROOT || "";
+
   async function loadJSON(path) {
     const r = await fetch(path);
     if (!r.ok) throw new Error(path + " " + r.status);
@@ -42,16 +45,16 @@
 
   async function loadData() {
     const [meta, stations, alignments, hfn, areas, corridors] = await Promise.all([
-      loadJSON("data/meta.json"),
-      loadJSON("data/stations.geojson"),
-      loadJSON("data/alignments.geojson"),
-      loadJSON("data/high_frequency_network.geojson"),
-      loadJSON("data/station_areas.geojson"),
-      loadJSON("data/corridor_areas.geojson"),
+      loadJSON(ROOT + "data/meta.json"),
+      loadJSON(ROOT + "data/stations.geojson"),
+      loadJSON(ROOT + "data/alignments.geojson"),
+      loadJSON(ROOT + "data/high_frequency_network.geojson"),
+      loadJSON(ROOT + "data/station_areas.geojson"),
+      loadJSON(ROOT + "data/corridor_areas.geojson"),
     ]);
     let figures = [];
     if (meta.years && meta.years.length) {
-      figures = await d3.csv("data/figures.csv", (r) => {
+      figures = await d3.csv(ROOT + "data/figures.csv", (r) => {
         const n = (k) => (r[k] === "" ? null : +r[k]);
         return {
           type: r.geography_type,
@@ -254,5 +257,5 @@
     return { type: "Feature", properties: f.properties, geometry: { type: g.type, coordinates: coords } };
   }
 
-  window.SAX = { bbox, forD3, METRICS, RAMP, WITHHELD, pct, pct1, num, periodLabel, loadData, binColor, barChart, dataTable, statements, COLS, slug, dateText };
+  window.SAX = { ROOT, bbox, forD3, METRICS, RAMP, WITHHELD, pct, pct1, num, periodLabel, loadData, binColor, barChart, dataTable, statements, COLS, slug, dateText };
 })();

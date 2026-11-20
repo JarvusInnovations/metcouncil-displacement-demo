@@ -4,7 +4,7 @@
   const { pct, pct1, num, periodLabel, barChart, dataTable, statements, COLS, slug, dateText } = window.SAX;
   const data = await SAX.loadData();
   const p = new URLSearchParams(location.hash.slice(1));
-  document.getElementById("back").href = "./" + location.hash;
+  document.getElementById("back").href = "explore/" + location.hash;
   document.getElementById("print-btn").addEventListener("click", () => window.print());
 
   const years = data.meta.years || [];
@@ -95,6 +95,6 @@
   const foot = d3.select("#foot");
   foot.append("p").text("Placeholder figures: U.S. Census Bureau, American Community Survey five-year estimates, tables B25003 and B07003, shared from tracts to areas by land area. They describe tenure and recent moves and are not a measure of displacement.");
   foot.append("p").text("Council layers as published on " + dateText(data.meta.snapshot_taken) + ". Basemap data © OpenStreetMap contributors. Built " + dateText(data.meta.built) + " by Jarvus Innovations as a demonstration for Metropolitan Council RFP 26P232.");
-  foot.append("p").text("Online: " + location.href.replace(/print\.html/, ""));
+  foot.append("p").text("Online: " + location.href.replace(/print\.html/, "explore/"));
   document.body.dataset.ready = "1";
 })();

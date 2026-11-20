@@ -279,3 +279,18 @@ pre { background: var(--surface); border: 1px solid var(--rule); border-radius: 
 }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; } }
 [hidden] { display: none !important; }
+
+/* Landing page */
+.brand-name { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.2; }
+.landing { max-width: 720px; padding-top: 48px; }
+.landing h1 { font-size: 36px; }
+.landing .lede { font-size: 19px; line-height: 1.55; color: var(--ink); }
+.landing .try { padding-left: 20px; }
+.landing .try li { margin-bottom: 6px; }
+.landing .built { margin-top: 20px; }
+.button {
+  display: inline-block; margin-top: 12px; padding: 12px 22px; border-radius: 999px;
+  background: var(--accent); color: var(--accent-ink); font-weight: 650; font-size: 17px; text-decoration: none;
+}
+.button:hover { text-decoration: underline; }
+@media (max-width: 520px) { .landing { padding-top: 28px; } .landing h1 { font-size: 28px; } .landing .lede { font-size: 17px; } }

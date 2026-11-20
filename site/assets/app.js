@@ -6,7 +6,7 @@
   const state = { mode: "all", year: null, metric: "renter_share", planned: true, sel: null, line: "" };
   let data, map;
   const $ = (id) => document.getElementById(id);
-  const base = new URL(".", location.href).href;
+  const base = new URL(window.SAX.ROOT || ".", location.href).href;
 
   /* ---------- URL state: every selection has its own address ---------- */
   function readHash() {
@@ -29,7 +29,7 @@
     if (!state.planned) p.set("planned", "0");
     const h = p.toString();
     history.replaceState(null, "", h ? "#" + h : location.pathname + location.search);
-    $("print-link").href = "print.html" + (h ? "#" + h : "");
+    $("print-link").href = SAX.ROOT + "print.html" + (h ? "#" + h : "");
   }
   const last = (a) => a[a.length - 1];
   const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
@@ -484,7 +484,7 @@
     if ((data.meta.years || []).length) files.push("figures.csv");
     files.push("datapackage.json", "meta.json", "update-report.txt");
     const ul = d3.select("#files");
-    files.forEach((f) => ul.append("li").append("a").attr("href", "data/" + f).text(f));
+    files.forEach((f) => ul.append("li").append("a").attr("href", SAX.ROOT + "data/" + f).text(f));
     $("snapshot").textContent = "Council layers as published on " + dateText(data.meta.snapshot_taken) + ". The map works from that saved copy.";
   }
 
@@ -493,7 +493,7 @@
     readHash();
     let layers;
     try {
-      [data, layers] = await Promise.all([SAX.loadData(), fetch("basemap/layers.json").then((r) => r.json())]);
+      [data, layers] = await Promise.all([SAX.loadData(), fetch(SAX.ROOT + "basemap/layers.json").then((r) => r.json())]);
     } catch (err) {
       $("panel").textContent = "The data files could not be loaded (" + err.message + ").";
       return;

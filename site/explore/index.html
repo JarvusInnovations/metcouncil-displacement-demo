@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Station Area Explorer (demonstration)</title>
+<meta name="description" content="A demonstration built by Jarvus Innovations for a proposal: the Metropolitan Council's published transit station areas on an open-source map, with placeholder Census figures.">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../vendor/maplibre-gl.css">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<a class="skip" href="#controls">Skip to the controls</a>
+<section class="demo-banner" aria-label="About this page">
+  <strong class="pill">Demonstration</strong>
+  <span>Prototype built by Jarvus Innovations for a proposal. Placeholder data from the U.S. Census Bureau. This is not the Metropolitan Council's product and not its displacement analysis.</span>
+</section>
+<header class="site-header">
+  <div class="brand">
+    <svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="15" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="16" cy="16" r="5" fill="currentColor"/><path d="M1 16h10M21 16h10" stroke="currentColor" stroke-width="2"/></svg>
+    <div>
+      <h1>Station Area Explorer</h1>
+      <p class="sub">Transit station areas in the seven-county Twin Cities region</p>
+    </div>
+  </div>
+  <nav aria-label="Pages">
+    <a href="../">Overview</a>
+    <a href="./" aria-current="page">Explore</a>
+    <a href="../how.html">How this was built</a>
+    <a id="print-link" href="../print.html">Print one page</a>
+  </nav>
+</header>
+
+<main id="main">
+  <section class="explore" aria-label="Map and station area details">
+    <div class="side">
+      <form id="controls" class="controls" onsubmit="return false" aria-label="Map controls">
+        <div class="field">
+          <label for="search">Find a station area</label>
+          <input id="search" type="search" list="station-list" placeholder="Type a station name" autocomplete="off">
+          <datalist id="station-list"></datalist>
+        </div>
+        <div class="field two">
+          <div>
+            <label for="line">Line</label>
+            <select id="line"><option value="">All lines</option></select>
+          </div>
+          <div>
+            <label for="station">Station</label>
+            <select id="station"><option value="">Choose a station</option></select>
+          </div>
+        </div>
+        <fieldset class="seg" id="mode-field">
+          <legend>Transit mode</legend>
+          <label><input type="radio" name="mode" value="all" checked><span>All</span></label>
+          <label><input type="radio" name="mode" value="LRT"><span>Light rail</span></label>
+          <label><input type="radio" name="mode" value="BRT"><span>Bus rapid transit</span></label>
+        </fieldset>
+        <fieldset class="seg" id="year-field" hidden>
+          <legend>Census period</legend>
+        </fieldset>
+        <fieldset class="seg" id="metric-field" hidden>
+          <legend>Figure on the map</legend>
+          <label><input type="radio" name="metric" value="renter_share" checked><span>Renter households</span></label>
+          <label><input type="radio" name="metric" value="moved_share"><span>Moved in past year</span></label>
+        </fieldset>
+        <label class="check"><input type="checkbox" id="planned" checked> Show planned lines</label>
+      </form>
+      <div id="panel" class="panel" aria-live="polite"></div>
+    </div>
+    <div class="map-wrap">
+      <div id="map" role="region" aria-label="Map of transit lines and station areas. Use the controls to choose a station area."></div>
+      <div class="legend" id="legend" aria-label="Map legend"></div>
+      <p class="snapshot" id="snapshot"></p>
+    </div>
+  </section>
+
+  <section class="story" id="story" aria-labelledby="story-h" hidden>
+    <div class="story-head">
+      <h2 id="story-h">Three things the Census estimates show</h2>
+      <p id="story-intro"></p>
+    </div>
+    <div class="cards" id="cards"></div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div>
+    <p><strong>About this page.</strong> A demonstration of a static, open-source approach, built by Jarvus Innovations for Metropolitan Council RFP 26P232. Station, line, and area geography comes from the Council's public TOD map service. Figures are Census Bureau American Community Survey estimates used as placeholders.</p>
+    <p><a href="../how.html">How this was built and the method note</a></p>
+  </div>
+  <div>
+    <p><strong>Data files this page reads</strong></p>
+    <ul class="files" id="files"></ul>
+  </div>
+</footer>
+
+<script src="../vendor/maplibre-gl.js"></script>
+<script src="../vendor/d3.min.js"></script>
+<script>window.SAX_ROOT = "../";</script>
+<script src="../assets/common.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>
